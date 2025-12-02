@@ -1,0 +1,72 @@
+:root {
+    --primary-color: #0a66c2;
+    --primary-hover: #004182;
+    --bg-color: #ffffff;
+    --text-primary: #191919;
+    --text-secondary: #666666;
+    --border-color: #e0e0e0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    width: 300px;
+    margin: 0;
+    padding: 0;
+    color: var(--text-primary);
+    background-color: var(--bg-color);
+}
+
+.popup-container {
+    padding: 16px;
+}
+
+header h1 {
+    font-size: 16px;
+    color: var(--primary-color);
+    margin: 0 0 16px 0;
+    font-weight: 600;
+}
+
+.resume-preview {
+    background-color: #f3f2ef;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin: 0 0 4px 0;
+    font-weight: 600;
+}
+
+.resume-name {
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.btn-manage {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-manage:hover {
+    background-color: var(--primary-hover);
+}

@@ -1,0 +1,46 @@
+{
+    "name": "JobScore Pro",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "description": "JobScore Pro with the help of AI",
+    "icons": {
+        "16": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png"
+    },
+    "permissions": [
+        "activeTab",
+        "storage"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup/main.html"
+    },
+    "options_page": "options/index.html",
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.linkedin.com/jobs/*"
+            ],
+            "js": [
+                "content/content.js"
+            ],
+            "css": [
+                "content/content.css"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "host_permissions": [
+        "https://generativelanguage.googleapis.com/*",
+        "https://www.linkedin.com/*"
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["icon.png"],
+            "matches": ["https://www.linkedin.com/*"]
+        }
+    ]
+}

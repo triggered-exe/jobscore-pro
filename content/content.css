@@ -1,0 +1,230 @@
+/* Job Match Score Card Styles */
+:root {
+    --primary-color: #2563eb;
+    --background-light: #ffffff;
+    --text-slate-700: #334155;
+    --text-slate-300: #cbd5e1;
+    --border-slate-200: #e2e8f0;
+    --border-slate-700: #334155;
+    --font-family-display: "Roboto", sans-serif;
+}
+
+.job-match-card {
+    background-color: var(--background-light);
+    color: var(--text-slate-700);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-slate-200);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    font-family: var(--font-family-display);
+    max-width: 100%;
+    width: 100%;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease-out;
+    margin-top: 1rem;
+}
+
+.job-match-card:not(.embedded) {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 320px;
+    z-index: 1000;
+}
+
+.job-match-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-slate-200);
+}
+
+.job-match-title-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.linkedin-icon {
+    background-color: #0A66C2;
+    border-radius: 2px;
+    color: white;
+    padding: 1px;
+    font-size: 16px;
+    font-family: sans-serif;
+    font-weight: bold;
+    line-height: 1;
+    display: inline-block;
+}
+
+.job-match-header-logo {
+    width: 20px;
+    height: 20px;
+    border-radius: 2px;
+    object-fit: cover;
+    margin-right: 0.5rem;
+}
+
+.job-match-title {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: #1e293b;
+}
+
+.job-match-powered-by {
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: #f1f5f9;
+    color: #64748b;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+
+.job-match-score-container {
+    background-image: linear-gradient(to right, #eff6ff, #e0e7ff);
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.job-match-score-circle {
+    flex-shrink: 0;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 9999px;
+    background-color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.job-match-score-circle span {
+    color: white;
+    font-size: 2.25rem;
+    font-weight: 700;
+}
+
+.job-match-score-label .job-match-score-text {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.job-match-score-label .job-match-score-level {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.job-match-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.job-match-summary-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.summary-bullet {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: var(--primary-color);
+    margin-top: 0.5rem;
+    flex-shrink: 0;
+}
+
+.summary-text {
+    color: #475569;
+    font-size: 1.2rem;
+    line-height: 1.5;
+}
+
+
+/* Loading and Error States */
+.job-match-card.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+}
+
+.job-match-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+}
+
+.job-match-spinner {
+    position: relative;
+    width: 32px;
+    height: 32px;
+}
+
+.job-match-spinner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #f1f5f9;
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.job-match-logo {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.job-match-error {
+    color: #dc2626;
+    font-size: 13px;
+    padding: 12px;
+    background-color: #fef2f2;
+    border-radius: 6px;
+    text-align: center;
+}
+
+/* Keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Add Material Icons font */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
