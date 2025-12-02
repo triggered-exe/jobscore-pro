@@ -168,35 +168,71 @@ function waitForElement(selector, timeout = 5000) {
 }
 
 async function getMatchScore(resumeContent, jobDetails) {
-    const prompt = `You are a professional job matching assistant. Compare the candidate's resume with the job posting and provide a match score.
+    const prompt = `You are a Senior Technical Recruiter with 15+ years of experience in talent acquisition for ${jobDetails.company} and similar companies. Act as an expert who has placed hundreds of candidates in the exact role of "${jobDetails.title}". Your task is to provide an extremely specific and accurate match assessment.
 
-**Resume:**
+**CRITICAL INSTRUCTIONS:**
+1. Be EXTREMELY specific to the job role "${jobDetails.title}"
+2. Analyze the candidate's qualifications against the EXACT requirements mentioned in the job description
+3. Consider industry standards, company culture, and role expectations
+4. Provide a realistic assessment that a hiring manager would actually use
+5. Do NOT give generic or random scores - be precise and data-driven
+
+**Candidate Resume:**
 ${resumeContent}
 
-**Job Details:**
-- Title: ${jobDetails.title}
+**Job Posting Details:**
+- Position: ${jobDetails.title}
 - Company: ${jobDetails.company}
-- Description: ${jobDetails.description}
+- Full Job Description: ${jobDetails.description}
 
-**Your Task:**
-1. Analyze how well the candidate's skills, experience, and qualifications match the job requirements
-2. Provide a match score from 1-100 where:
-   - 90-100: Excellent match
-   - 70-89: Good match
-   - 50-69: Moderate match
-   - 30-49: Weak match
-   - 1-29: Poor match
-3. Provide exactly 2 bullet points explaining the score:
-   - First point: Main strength or positive match factor
-   - Second point: Area for improvement, caution, or what's missing
+**Your Expert Analysis Process:**
 
-**Response Format (JSON only, no markdown):**
+STEP 1: ROLE-SPECIFIC REQUIREMENTS ANALYSIS
+- Extract the EXACT hard requirements from the job description (skills, experience, certifications)
+- Identify the EXACT nice-to-have qualifications
+- Understand the specific responsibilities and expectations
+
+STEP 2: CANDIDATE QUALIFICATION MAPPING
+- Map candidate's skills directly to job requirements
+- Assess years of experience in the specific domain
+- Evaluate relevance of past roles and achievements
+- Check for required certifications or education
+
+STEP 3: INDUSTRY AND COMPANY CONTEXT
+- Consider what ${jobDetails.company} typically looks for in this role
+- Factor in industry trends and expectations
+- Assess cultural fit based on company reputation
+
+STEP 4: PRECISE MATCH SCORE CALCULATION
+Provide a match score from 1-100 based on:
+- 90-100: Perfect fit - Candidate exceeds all requirements, has ideal background
+- 75-89: Strong fit - Candidate meets all core requirements with minor gaps
+- 60-74: Good fit - Candidate meets most requirements but has noticeable gaps
+- 45-59: Moderate fit - Candidate meets some requirements but lacks key qualifications
+- 30-44: Weak fit - Candidate has related experience but significant gaps
+- 10-29: Poor fit - Candidate lacks most required qualifications
+- 1-9: Not qualified - Candidate completely mismatched for the role
+
+STEP 5: SPECIFIC FEEDBACK FOR IMPROVEMENT
+Provide exactly 3 detailed bullet points:
+1. Main strength: Specific qualification that makes candidate suitable
+2. Key gap: Most critical missing requirement or weakness
+3. Actionable advice: Concrete step candidate can take to improve fit
+
+**Response Format (STRICT JSON, no markdown, no explanations):**
 {
-  "score": <number 1-100>,
-  "summary": ["<first point>", "<second point>"]
+  "score": <precise_number_1-100>,
+  "role": "${jobDetails.title}",
+  "company": "${jobDetails.company}",
+  "feedback": [
+    "Specific strength related to this exact role",
+    "Critical gap for this specific position",
+    "Actionable improvement suggestion"
+  ],
+  "confidence": "high|medium|low"
 }`;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:streamGenerateContent?key=${GEMINI_API_KEY}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:streamGenerateContent?key=${GEMINI_API_KEY}`;
 
     const payload = {
         contents: [{
@@ -294,18 +330,12 @@ function showMatchCard({ loading, error, result }) {
                 </div>
                 <div class="job-match-score-label">
                     <p class="job-match-score-text">Match Score</p>
-                    <p class="job-match-score-level">${scoreLevel.label}</p>
+                    <p class="job-match-score-level">${scoreLevel.label} - ${result.recommendation || 'N/A'}</p>
                 </div>
             </div>
             <ul class="job-match-summary">
-                <li class="job-match-summary-item">
-                    <div class="summary-bullet"></div>
-                    <p class="summary-text">${result.summary[0]}</p>
-                </li>
-                <li class="job-match-summary-item">
-                    <div class="summary-bullet"></div>
-                    <p class="summary-text">${result.summary[1]}</p>
-                </li>
+                ${(result.strengths || []).slice(0,2).map(s => `<li class="job-match-summary-item"><div class="summary-bullet"></div><p class="summary-text"><strong>Strength:</strong> ${s}</p></li>`).join('')}
+                ${(result.gaps || []).slice(0,2).map(g => `<li class="job-match-summary-item"><div class="summary-bullet"></div><p class="summary-text"><strong>Gap:</strong> ${g}</p></li>`).join('')}
             </ul>
         `;
     }
