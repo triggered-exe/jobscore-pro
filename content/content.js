@@ -1,5 +1,5 @@
 // Content script for LinkedIn Job Match
-const GEMINI_API_KEY = 'AIzaSyB8YNFOrzbEKeeW9hmn00pEGs_xULKRcxs';
+const GEMINI_API_KEY = 'AIzaSyCRlKYHXCjR4TGTLv5iiCH8cLOaYFp72rc';
 
 let currentJobId = null;
 let matchCard = null;
@@ -330,12 +330,11 @@ function showMatchCard({ loading, error, result }) {
                 </div>
                 <div class="job-match-score-label">
                     <p class="job-match-score-text">Match Score</p>
-                    <p class="job-match-score-level">${scoreLevel.label} - ${result.recommendation || 'N/A'}</p>
+                    <p class="job-match-score-level">${scoreLevel.label} - Confidence: ${result.confidence || 'N/A'}</p>
                 </div>
             </div>
             <ul class="job-match-summary">
-                ${(result.strengths || []).slice(0,2).map(s => `<li class="job-match-summary-item"><div class="summary-bullet"></div><p class="summary-text"><strong>Strength:</strong> ${s}</p></li>`).join('')}
-                ${(result.gaps || []).slice(0,2).map(g => `<li class="job-match-summary-item"><div class="summary-bullet"></div><p class="summary-text"><strong>Gap:</strong> ${g}</p></li>`).join('')}
+                ${(result.feedback || []).slice(0,3).map(f => `<li class="job-match-summary-item"><div class="summary-bullet"></div><p class="summary-text">${f}</p></li>`).join('')}
             </ul>
         `;
     }

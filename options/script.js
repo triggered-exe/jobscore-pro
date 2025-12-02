@@ -116,6 +116,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        // Disable upload during processing
+        uploadBtn.disabled = true;
+        dropZone.style.pointerEvents = 'none';
+        dropZone.style.opacity = '0.6';
+
         try {
             showStatus('Reading file...', 'loading');
             const base64Data = await fileToBase64(file);
@@ -140,6 +145,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.error(error);
             showStatus('Error: ' + error.message, 'error');
+        } finally {
+            // Re-enable upload
+            uploadBtn.disabled = false;
+            dropZone.style.pointerEvents = 'auto';
+            dropZone.style.opacity = '1';
         }
     }
 
