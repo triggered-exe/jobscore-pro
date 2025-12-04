@@ -1,5 +1,4 @@
 // Content script for LinkedIn Job Match
-const GEMINI_API_KEY = 'AIzaSyCRlKYHXCjR4TGTLv5iiCH8cLOaYFp72rc';
 
 let currentJobId = null;
 let matchCard = null;
@@ -168,121 +167,30 @@ function waitForElement(selector, timeout = 5000) {
 }
 
 async function getMatchScore(resumeContent, jobDetails) {
-    const prompt = `You are a Senior Technical Recruiter with 15+ years of experience in talent acquisition for ${jobDetails.company} and similar companies. Act as an expert who has placed hundreds of candidates in the exact role of "${jobDetails.title}". Your task is to provide an extremely specific and accurate match assessment.
+    // Send message to background script to avoid CORS issues
+    return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage(
+            {
+                type: 'JOB_MATCH',
+                payload: {
+                    resumeContent,
+                    jobDetails
+                }
+            },
+            (response) => {
+                if (chrome.runtime.lastError) {
+                    reject(new Error(chrome.runtime.lastError.message));
+                    return;
+                }
 
-**CRITICAL INSTRUCTIONS:**
-1. Be EXTREMELY specific to the job role "${jobDetails.title}"
-2. Analyze the candidate's qualifications against the EXACT requirements mentioned in the job description
-3. Consider industry standards, company culture, and role expectations
-4. Provide a realistic assessment that a hiring manager would actually use
-5. Do NOT give generic or random scores - be precise and data-driven
-
-**Candidate Resume:**
-${resumeContent}
-
-**Job Posting Details:**
-- Position: ${jobDetails.title}
-- Company: ${jobDetails.company}
-- Full Job Description: ${jobDetails.description}
-
-**Your Expert Analysis Process:**
-
-STEP 1: ROLE-SPECIFIC REQUIREMENTS ANALYSIS
-- Extract the EXACT hard requirements from the job description (skills, experience, certifications)
-- Identify the EXACT nice-to-have qualifications
-- Understand the specific responsibilities and expectations
-
-STEP 2: CANDIDATE QUALIFICATION MAPPING
-- Map candidate's skills directly to job requirements
-- Assess years of experience in the specific domain
-- Evaluate relevance of past roles and achievements
-- Check for required certifications or education
-
-STEP 3: INDUSTRY AND COMPANY CONTEXT
-- Consider what ${jobDetails.company} typically looks for in this role
-- Factor in industry trends and expectations
-- Assess cultural fit based on company reputation
-
-STEP 4: PRECISE MATCH SCORE CALCULATION
-Provide a match score from 1-100 based on:
-- 90-100: Perfect fit - Candidate exceeds all requirements, has ideal background
-- 75-89: Strong fit - Candidate meets all core requirements with minor gaps
-- 60-74: Good fit - Candidate meets most requirements but has noticeable gaps
-- 45-59: Moderate fit - Candidate meets some requirements but lacks key qualifications
-- 30-44: Weak fit - Candidate has related experience but significant gaps
-- 10-29: Poor fit - Candidate lacks most required qualifications
-- 1-9: Not qualified - Candidate completely mismatched for the role
-
-STEP 5: SPECIFIC FEEDBACK FOR IMPROVEMENT
-Provide exactly 3 detailed bullet points:
-1. Main strength: Specific qualification that makes candidate suitable
-2. Key gap: Most critical missing requirement or weakness
-3. Actionable advice: Concrete step candidate can take to improve fit
-
-**Response Format (STRICT JSON, no markdown, no explanations):**
-{
-  "score": <precise_number_1-100>,
-  "role": "${jobDetails.title}",
-  "company": "${jobDetails.company}",
-  "feedback": [
-    "Specific strength related to this exact role",
-    "Critical gap for this specific position",
-    "Actionable improvement suggestion"
-  ],
-  "confidence": "high|medium|low"
-}`;
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:streamGenerateContent?key=${GEMINI_API_KEY}`;
-
-    const payload = {
-        contents: [{
-            role: "user",
-            parts: [{
-                text: prompt
-            }]
-        }],
-        generationConfig: {
-            thinkingConfig: {
-                thinkingBudget: 0
+                if (response.success) {
+                    resolve(response.data);
+                } else {
+                    reject(new Error(response.error || 'Failed to get match score'));
+                }
             }
-        }
-    };
-
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
+        );
     });
-
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Failed to get match score');
-    }
-
-    const data = await response.json();
-
-    let text = '';
-    if (Array.isArray(data)) {
-        for (const chunk of data) {
-            if (chunk.candidates?.[0]?.content?.parts?.[0]?.text) {
-                text += chunk.candidates[0].content.parts[0].text;
-            }
-        }
-    } else {
-        text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    }
-
-    if (!text) {
-        throw new Error('No response from AI');
-    }
-
-    // Parse JSON response (remove markdown code blocks if present)
-    const jsonText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    const result = JSON.parse(jsonText);
-
-    return result;
 }
 
 function showMatchCard({ loading, error, result }) {

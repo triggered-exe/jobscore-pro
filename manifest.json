@@ -34,7 +34,7 @@
         }
     ],
     "host_permissions": [
-        "https://generativelanguage.googleapis.com/*",
+        "https://d9okpf4hoh.execute-api.eu-north-1.amazonaws.com/*",
         "https://www.linkedin.com/*"
     ],
     "web_accessible_resources": [
